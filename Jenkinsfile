@@ -2,8 +2,8 @@
 // Étapes : Install -> Tests+Coverage -> SonarQube -> Build Docker -> Trivy -> Push Docker Hub
 //
 // Pré-requis à configurer dans Jenkins (Manage Jenkins > Credentials) :
-//   - sonar-token      : Secret text  = token d'analyse SonarQube
-//   - dockerhub-creds  : Username/password = identifiants Docker Hub (projet2efrei)
+//   - remi-sonar-token          : Secret text  = token d'analyse SonarQube
+//   - remi-dockerhub-credentials : Username/password = identifiants Docker Hub (projet2efrei)
 // Agent : doit disposer de node, npm, docker et sonar-scanner.
 
 pipeline {
@@ -41,7 +41,7 @@ pipeline {
 
     stage('Analyse SonarQube') {
       steps {
-        withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
+        withCredentials([string(credentialsId: 'remi-sonar-token', variable: 'SONAR_TOKEN')]) {
           sh 'sonar-scanner -Dsonar.host.url=$SONAR_HOST -Dsonar.token=$SONAR_TOKEN'
         }
       }
@@ -69,7 +69,7 @@ pipeline {
 
     stage('Push Docker Hub') {
       steps {
-        withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+        withCredentials([usernamePassword(credentialsId: 'remi-dockerhub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
           sh '''
             echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
             docker push $IMAGE_NAME:$IMAGE_TAG
