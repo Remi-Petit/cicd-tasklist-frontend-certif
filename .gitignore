@@ -39,3 +39,6 @@ junit*.xml
 *.tsbuildinfo
 
 .scannerwork/
+
+# SBOM générés
+sbom-*.json
